@@ -7,8 +7,16 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all if params[:sort] == nil
-    @movies = Movie.all(:order => params[:sort])
+# Created on HW2, Part1
+# @movies = Movie.all(:order => params[:sort])
+    @all_ratings = Movie.distinct_ratings
+    if params[:ratings]
+      @movies = Movie.find(:all, :order => params[:sort], :conditions => { :rating => params[:ratings].keys })
+      @selected_ratings = params[:ratings].keys
+    else
+      @movies = Movie.all(:order => params[:sort])
+      @selected_ratings = @all_ratings
+    end
   end
 
   def new
