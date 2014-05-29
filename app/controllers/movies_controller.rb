@@ -7,16 +7,41 @@ class MoviesController < ApplicationController
   end
 
   def index
-# Created on HW2, Part1
-# @movies = Movie.all(:order => params[:sort])
+    
+    # debug
+=begin
+    puts 'Params.Ratings' + params[:ratings].to_s
+    puts 'Params.Sort' + params[:sort].to_s
+    puts 'Session.Ratings' + session[:ratings].to_s
+    puts 'Session.Sort' + session[:sort].to_s
+=end
+
+    # if no params passed and there are params in session, use them
+    if (!params.has_key?(:ratings) && !params.has_key?(:sort)) && (session.has_key?(:ratings) || session.has_key?(:sort))
+      # to keep the flash message on one more redirect
+      flash.keep
+      # redirect with the params in session
+      redirect_to :action => 'index', :ratings => session[:ratings], :sort => session[:sort]
+    end
+
+    # if user unchecks all checkboxes
+    # use the settings stored in session[]
+    if !params[:ratings]
+      params[:ratings] = session[:ratings]
+    end
+
     @all_ratings = Movie.distinct_ratings
-    if params[:ratings]
+    if params[:ratings] && params[:ratings].count > 0
       @movies = Movie.find(:all, :order => params[:sort], :conditions => { :rating => params[:ratings].keys })
       @selected_ratings = params[:ratings].keys
     else
       @movies = Movie.all(:order => params[:sort])
+      # doesn't make sense no rating chosen, so we select all ratings
       @selected_ratings = @all_ratings
     end
+
+    session[:ratings] = Hash[@selected_ratings.map { |r| [r, 1]}]
+    session[:sort] = params[:sort]
   end
 
   def new
