@@ -4,10 +4,10 @@
 %table#movies
   %thead
     %tr
-      %th 
+      %th{:class => ('hilite' if params[:sort] == 'title')}
         %a#title_header{:href => '?sort=title'} Movie Title
       %th Rating
-      %th
+      %th{:class => ('hilite' if params[:sort] == 'release_date')}
         %a#release_date_header{:href => '?sort=release_date'} Release Date
       %th More Info
   %tbody
